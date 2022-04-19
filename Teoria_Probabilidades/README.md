@@ -1,7 +1,13 @@
 ```python
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+```
+
+
+```python
+font = {'family' : 'Arial',
+        'weight' : 'bold',
+        'size'   : 10}
 ```
 
 ## Introdución a la Probabilidad
@@ -33,7 +39,7 @@ $$ P(A) = \frac{N_i} {N} = \frac{1}{2} $$
 
 
 
-Es decir, un elemento de todas las posibilidades en este caso cara sobre todos los posibles resultados cara o sello, es decir 2.
+Es decir, un elemento de todas las posibilidades,en este caso cara, sobre todos los posibles resultados cara o sello. (1/2)
 
 Esta relación se mantiene, si lanzamos varias veces la moneda quiere decir que obtendremos la mitad de las veces cara y la otra mitad sello?
 
@@ -44,64 +50,52 @@ Denotaremos los elementos como <cite>T y H ; T= Tail y H=head <cite>, esta notac
 
 
 ```python
-lanzamientos  = 10
-opciones = ['H','T']
-prob = [0.5 , 0.5]
+lanzamientos  = 10  #Número de lanzamientos
+opciones = ['H','T'] #opciones de resultados
+prob = [0.5 , 0.5] #Misma probabilidad para cada resultado, una moneda simetrica
 ```
 
 
 ```python
 simulacion = np.random.choice(['H','T'],size=lanzamientos, p=prob)
-simulacion
+print('Los resultados de {} lanzamientos son: {} '.format(lanzamientos,simulacion.tolist()))
+
 ```
 
-
-
-
-    array(['T', 'H', 'H', 'T', 'H', 'H', 'T', 'H', 'H', 'H'], dtype='<U1')
-
-
+    Los resultados de 10 lanzamientos son: ['H', 'T', 'H', 'H', 'H', 'T', 'H', 'H', 'T', 'H'] 
+    
 
 
 ```python
 valores, cant = np.unique(simulacion, return_counts=True)
-print("Para {lan} la probabilidad de obtener cara fue {p}".format(lan=lanzamientos,p=cant[0]/len(simulacion)))
+print("Para {lan} lanzamientos, la frecuencia relativa de obtener cara fue {p}".format(lan=lanzamientos,p=cant[0]/len(simulacion)))
 ```
 
-    Para 10 la probabilidad de obtener cara fue 0.7
+    Para 10 lanzamientos, la frecuencia relativa de obtener cara fue 0.7
     
 
-Otra formula que debemos tener encuenta es el error estandar, tengamos esta formula en cuenta en todo momento.
+La frecuencia relativa se calcula con el número de veces que ocurre un evento dividio por el número total de de intentos en un experimento:
 
-$$ SE = \frac{\sigma}{\sqrt{N}}
+$$ Fr = \frac{N_o} {N_t} $$
 
-Si nuestra desviación estandar es 1/2 y la cantidad de lanzamientos es 10, nuestro error es:
-$$ SE =  \frac{0.5}{10}
+Diferenciemos la probabilidad teórica de la frecuencia relativa para poder separar estos conceptos:
+La probabilidad teórica de lanzar una moneda es:  $ \frac{1}{2} $, pero es posible que de 10 lanzamientos no se obtenga exactamente 5/5 de los reusltados, pero bien debería de estar cerca.
 
-Crearemos un código para realizar la misma prueba varias veces
+Si se lanza una moneda cien veces, la cantidad de veces que aparece el resultado a estudiar seria la frecuencia relativa, de modo que si de 10 lanzamientos 6 fueron cara, la fruencia relativa de lanzar cara sería $ \frac{6}{10} $
 
-
-```python
-0.5/np.sqrt(10)
-```
-
-
-
-
-    0.15811388300841897
-
-
+Construyamos una función para seguir experimentando de manera repetida.
 
 
 ```python
+#Tenemos un trigger como boleano para determinar si mostraremos una string o solo la cantidad 
 def testI(lanzamientos:int,result:bool):
     a  = lanzamientos
     opciones = ['H','T']
     prob = [0.5 , 0.5]
-    simulacion = np.random.choice(['H','T'],size=lanzamientos, p=prob)
+    simulacion = np.random.choice(opciones,size=lanzamientos, p=prob)
     valores, cant = np.unique(simulacion, return_counts=True)
     if result==True:
-        return print("Para {lan} la probabilidad de obtener cara fue {p}".format(lan=lanzamientos,p=cant[0]/a))
+        return print("Para {lan} lanzamientos la frecuencia relativa de obtener cara fue {p}".format(lan=lanzamientos,p=cant[0]/a))
     else:
         return cant[0]/len(simulacion)
 
@@ -112,53 +106,60 @@ def testI(lanzamientos:int,result:bool):
 testI(10,True)
 ```
 
-    Para 10 la probabilidad de obtener cara fue 0.2
+    Para 10 lanzamientos la frecuencia relativa de obtener cara fue 0.8
     
+
+Realizemos el test varias veces
 
 
 ```python
-prueba = 1
-while prueba < 10:
-    testI(10,True)
-    prueba +=1
+test = 0 #inicializamos el contandor en 1
+while test < 10:  #repetiremos el test 10 veces
+    testI(10,True) #cada repetición constara de 10 lanzamientos
+    test +=1
 ```
 
-    Para 10 la probabilidad de obtener cara fue 0.6
-    Para 10 la probabilidad de obtener cara fue 0.6
-    Para 10 la probabilidad de obtener cara fue 0.5
-    Para 10 la probabilidad de obtener cara fue 0.7
-    Para 10 la probabilidad de obtener cara fue 0.4
-    Para 10 la probabilidad de obtener cara fue 0.6
-    Para 10 la probabilidad de obtener cara fue 0.3
-    Para 10 la probabilidad de obtener cara fue 0.2
-    Para 10 la probabilidad de obtener cara fue 0.3
+    Para 10 lanzamientos la frecuencia relativa de obtener cara fue 0.5
+    Para 10 lanzamientos la frecuencia relativa de obtener cara fue 0.6
+    Para 10 lanzamientos la frecuencia relativa de obtener cara fue 0.7
+    Para 10 lanzamientos la frecuencia relativa de obtener cara fue 0.8
+    Para 10 lanzamientos la frecuencia relativa de obtener cara fue 0.6
+    Para 10 lanzamientos la frecuencia relativa de obtener cara fue 0.3
+    Para 10 lanzamientos la frecuencia relativa de obtener cara fue 0.3
+    Para 10 lanzamientos la frecuencia relativa de obtener cara fue 0.5
+    Para 10 lanzamientos la frecuencia relativa de obtener cara fue 0.7
+    Para 10 lanzamientos la frecuencia relativa de obtener cara fue 0.3
     
+
+Se repite el comportamiento esperado al que cuando hicimos una solo test, es decir valores que se mueven cerca al 0.5
+
+¿Qué ocurre si aumentamos la cantidad de lanzamientos?
 
 
 ```python
-prueba = 1
-while prueba < 10:
+#Aumentamos la cantidad de lanzamientos a 1000
+test = 1
+while test < 10:
     testI(1000,True)
-    prueba +=1
+    test +=1
 ```
 
-    Para 1000 la probabilidad de obtener cara fue 0.514
-    Para 1000 la probabilidad de obtener cara fue 0.513
-    Para 1000 la probabilidad de obtener cara fue 0.527
-    Para 1000 la probabilidad de obtener cara fue 0.513
-    Para 1000 la probabilidad de obtener cara fue 0.522
-    Para 1000 la probabilidad de obtener cara fue 0.502
-    Para 1000 la probabilidad de obtener cara fue 0.467
-    Para 1000 la probabilidad de obtener cara fue 0.489
-    Para 1000 la probabilidad de obtener cara fue 0.53
+    Para 1000 lanzamientos la frecuencia relativa de obtener cara fue 0.504
+    Para 1000 lanzamientos la frecuencia relativa de obtener cara fue 0.482
+    Para 1000 lanzamientos la frecuencia relativa de obtener cara fue 0.476
+    Para 1000 lanzamientos la frecuencia relativa de obtener cara fue 0.472
+    Para 1000 lanzamientos la frecuencia relativa de obtener cara fue 0.537
+    Para 1000 lanzamientos la frecuencia relativa de obtener cara fue 0.455
+    Para 1000 lanzamientos la frecuencia relativa de obtener cara fue 0.507
+    Para 1000 lanzamientos la frecuencia relativa de obtener cara fue 0.529
+    Para 1000 lanzamientos la frecuencia relativa de obtener cara fue 0.509
     
 
+Esta vez los valores estuvieron más cerca del 0.5 y se continuaran acercando a medida que aumentos el valor de los lanzamientos, esta idea se explica con la ley de los grandes números y el concepto de frecuencia relativa.
 
-```python
-font = {'family' : 'normal',
-        'weight' : 'bold',
-        'size'   : 10}
-```
+<a href=" https://en.wikipedia.org/wiki/Law_of_large_numbers">    Ley de los grandes números </a>
+
+Continuando con la idea intentemos gráficar el comportamiento para tener una idea visual del asunto
 
 
 ```python
@@ -166,66 +167,75 @@ def testII(lanzamientos:int, plot=False):
     a  = lanzamientos
     opciones = ['H','T']
     prob = [0.5 , 0.5]
-    simulacion = np.random.choice(['H','T'],size=lanzamientos, p=prob)
+    simulacion = np.random.choice(opciones,size=lanzamientos, p=prob)
     valores, cant = np.unique(simulacion, return_counts=True)
 
     if plot == True:
         plt.figure(figsize=(7,5))
         plt.bar(valores,cant)
-        plt.title('Frecuencia de resultados ')
+        plt.title('Frecuencia relativa ')
         
         plt.text(valores[0],cant[0]+(a*0.009),cant[0],font)
-        plt.text(valores[0],cant[0]-(cant[0]*0.5),'P(H)= {}'.format(round(cant[0]/cant.sum(),3)),font)
+        plt.text(valores[0],cant[0]-(cant[0]*0.5),'Fr= {}'.format(round(cant[0]/cant.sum(),3)),font)
         plt.text(valores[1],cant[1]+(a*0.009),cant[1],font)
-        plt.text(valores[1],cant[1]-(cant[1]*0.5),'P(T)= {}'.format(round(cant[1]/cant.sum(),3)),font)
+        plt.text(valores[1],cant[1]-(cant[1]*0.5),'Fr= {}'.format(round(cant[1]/cant.sum(),3)),font)
         plt.show()
 
     else:
-        print("Para {lan} la probabilidad de obtener cara fue {p}".format(lan=lanzamientos,p=cant[0]/len(simulacion)))
-
-        
-    return 
+              
+        return valores, cant
 ```
 
 
 ```python
-testII(100,True)
-```
-
-    findfont: Font family ['normal'] not found. Falling back to DejaVu Sans.
-    
-
-
-    
-![png](introduccion_probabilidad_files/introduccion_probabilidad_28_1.png)
-    
-
-
-
-```python
-final = 100000
-inicio = int(final*0.001)
-
+testII(1000,True)
 ```
 
 
+    
+![png](introduccion_probabilidad_files/introduccion_probabilidad_33_0.png)
+    
+
+
+Si se repite el procedimiento varias veces observaremos como las barras cada vez tienen un tamaño similar, o tal y como indica la ley de los grandes números para pocos lanzamientos la frecuencia es inestable, pero si aumentamos los lanzamientos el valor va a estabilizarse, en este caso converger sobre 0.5
+
+Destacar que no se quiere decir que al aumentar la frecuencia se observa una compensación, es decir, si luego de varios intentos con un resultado el siguiente pudiese ser el resultado opuesto, no es así, se debe tener encuentra que los resultados son mutuamente excluyentes, solo despues de muchas repeticiones encontraremos que el valor converge.
+
+Veamos el gráfico de la frecuencia relativa
+
+
 ```python
-guardar = {}
+final = 100000 #número final de lanzamientos
+inicio = int(final*0.001) #número inicial
+
+```
+
+
+```python
+resultados = {}
 for i in range(inicio,final,inicio):
-    guardar[i] = testI(i,False)
+    resultados[i] = testI(i,False)
     
 ```
 
 
 ```python
-plt.plot(guardar.keys(), guardar.values())
+plt.plot(resultados.keys(), resultados.values())
+plt.title('Frecuencia relativa del lanzamiento de monedas')
+plt.xlabel('Lanzamientos')
+plt.ylabel('Frecuencia relativa')
+plt.grid()
 plt.show()
 ```
 
 
     
-![png](introduccion_probabilidad_files/introduccion_probabilidad_31_0.png)
+![png](introduccion_probabilidad_files/introduccion_probabilidad_39_0.png)
     
 
+
+La frecuecia relativa se usa cuando la probabildiad se estima usando los resultados de un experimento, por ejemplo, para un evento se puede desconocer la probabilidad teórica pero repitiendo el evento con los mismos criterios podemos obtener una probabilidad experimental o frecuencia relativa.
+
+Tener una idea clara de lo que representa la probalidad y las nociones de incertidumbre es el primer paso para superar los sesgo, si bien la educación teórica es fundamental los invito a realizar distintos experimentos con las herramientas presentadas de manera que puedan llevar una educación experimental de manera de rofrozar la formación del razonamiento probabilístico. 
 
 <cita>En el fondo, la teoría de las probabilidades es solo el sentido común expresado con números (Simon Pierre Laplace) </cita> ”
